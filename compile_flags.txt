@@ -1,0 +1,4 @@
+-I
+../STM8-SPL-SDCC/Libraries/STM8S_StdPeriph_Driver/inc
+-I
+./src

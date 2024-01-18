@@ -1,0 +1,43 @@
+name: release
+run-name: building for stm8s103
+on:
+  push:
+    tags:
+      - "v*"
+jobs:
+  check-bats-version:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get install -y sdcc
+      - uses: actions/checkout@v4
+        with:
+          repository: 'bschwand/STM8-SPL-SDCC'
+          path: 'STM8-SPL-SDCC'
+      - uses: actions/checkout@v4
+        with:
+          path: 'open-fixdry-nt1'
+      - run: sdcc -v
+      - run: cd open-fixdry-nt1 ; make
+      - run: wget https://raw.githubusercontent.com/tenbaht/sduino/development/sduino/tools/wrapper/sdsize.sh
+      - run: (echo '```' ; sh sdsize.sh ./open-fixdry-nt1/build/STM8S103/STM8S103.map ; echo '```') > ./stat.txt
+        name: get stat
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+          body_path: stat.txt
+      - name: Upload Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./open-fixdry-nt1/build/STM8S103/STM8S103.hex
+          asset_name: nt1-stm8s103-${{ github.ref }}.hex
+          asset_content_type: text/plain

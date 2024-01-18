@@ -1,6 +1,10 @@
+For src/stm8s*, Makefile and prebuild firmware license is [SLA0044](https://www.st.com/content/ccc/resource/legal/legal_agreement/license_agreement/group0/59/57/63/12/cf/a6/47/65/SLA0044/files/SLA0044.txt/jcr:content/translations/en.SLA0044.txt)
+
+For other source files:
+
 MIT License
 
-Copyright (c) 2024 tarwirdur
+Copyright (c) 2024
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
