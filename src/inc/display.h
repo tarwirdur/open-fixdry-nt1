@@ -8,4 +8,8 @@ void update_display_buffer__settings();
 void clear_screen();
 void show_next_sign();
 
+#ifdef VER_TM1639
+  void tm1639_sendData();
+#endif
+
 #endif

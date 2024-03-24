@@ -1,6 +1,6 @@
 #ifndef __COMMON_H
 #define __COMMON_H
-
+#include "../config.h"
 #ifndef __SDCC
   // hacks for clangd
   #define __CLANGD
@@ -14,6 +14,5 @@
 #ifndef __CLANGD
   #include "../stm8s_it.h"    /* SDCC patch: required by SDCC for interrupts */
 #endif
-#include "../config.h"
 
 #endif

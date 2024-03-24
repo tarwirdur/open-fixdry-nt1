@@ -8,6 +8,7 @@ typedef enum {
   T_MODE_INACTIVE,
   T_DHT,
   T_BEEPER,
+  T_BLINK,
   CNT_MsDelayCountdownTimer
 } MsDelayCountdownTimer;
 

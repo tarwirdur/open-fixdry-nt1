@@ -67,6 +67,10 @@ void settings_loop() {
   handle_user_interaction__settings();
   update_display_buffer__settings();
   GPIO_WriteLow(PORT_HEATER, PIN_HEATER);
+  #ifdef VER_TM1639
+    if (state.flags & SF_DISPLAY_ENABLED)
+      tm1639_sendData();
+  #endif
   delay_ms_blocking(10);
 }
 
@@ -133,6 +137,10 @@ void normal_loop() {
   }
 
   update_display_buffer();
+  #ifdef VER_TM1639
+    if (state.flags & SF_DISPLAY_ENABLED)
+      tm1639_sendData();
+  #endif
   delay_ms_blocking(10);
 }
 
@@ -147,8 +155,14 @@ void init() {
   TIM2_Cmd(ENABLE);
   ITC_SetSoftwarePriority(ITC_IRQ_TIM2_OVF, ITC_PRIORITYLEVEL_2);
 
-  GPIO_Init(PORT_DISP, PIN_DISP_ST_CP | PIN_DISP_SER | PIN_DISP_SH_CP, GPIO_MODE_OUT_PP_LOW_FAST);
-
+  #ifndef VER_TM1639
+    GPIO_Init(PORT_DISP, PIN_DISP_ST_CP | PIN_DISP_SER | PIN_DISP_SH_CP, GPIO_MODE_OUT_PP_LOW_FAST);
+  #endif
+  #ifdef VER_TM1639
+    GPIO_Init(PORT_TM1639_CLK, PIN_TM1639_CLK, GPIO_MODE_OUT_PP_LOW_FAST);
+    GPIO_Init(PORT_TM1639_DIO, PIN_TM1639_DIO, GPIO_MODE_OUT_PP_LOW_FAST);
+    GPIO_Init(PORT_TM1639_STB, PIN_TM1639_STB, GPIO_MODE_OUT_PP_LOW_FAST);
+  #endif
   GPIO_Init(PORT_BEEPER, PIN_BEEPER, GPIO_MODE_OUT_PP_LOW_FAST);
   GPIO_Init(PORT_HEATER, PIN_HEATER, GPIO_MODE_OUT_PP_LOW_FAST);
   GPIO_Init(PORT_FAN, PIN_FAN, GPIO_MODE_OUT_PP_LOW_FAST);
@@ -159,8 +173,10 @@ void init() {
 
 void onTimer2_OVF() { // each 500us
   clock_tick();
-  if (state.flags & SF_DISPLAY_ENABLED)
-    show_next_sign();
+  #ifndef VER_TM1639
+    if (state.flags & SF_DISPLAY_ENABLED)
+      show_next_sign();
+  #endif
   TIM2_ClearFlag(TIM2_FLAG_UPDATE);
 }
 

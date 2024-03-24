@@ -20,6 +20,6 @@ extern struct dht_st dht;
 void dht_init_tim4();
 void dht_start();
 void onTimer4_OVF();
-void irq_gpioc();
+void irq_gpio_dht();
 
 #endif

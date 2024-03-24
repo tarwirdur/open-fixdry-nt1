@@ -130,16 +130,18 @@ INTERRUPT_HANDLER(EXTI_PORTB_IRQHandler, 4)
      it is recommended to set a breakpoint on the following instruction.
   */
 }
-
+extern void irq_gpio_dht();
 /**
   * @brief External Interrupt PORTC Interrupt routine.
   * @param  None
   * @retval None
   */
-extern void irq_gpioc();
+
 INTERRUPT_HANDLER(EXTI_PORTC_IRQHandler, 5)
 {
-  irq_gpioc();
+  #ifdef VER_TM1639
+    irq_gpio_dht();
+  #endif
 }
 
 /**
@@ -149,9 +151,9 @@ INTERRUPT_HANDLER(EXTI_PORTC_IRQHandler, 5)
   */
 INTERRUPT_HANDLER(EXTI_PORTD_IRQHandler, 6)
 {
-  /* In order to detect unexpected events during development,
-     it is recommended to set a breakpoint on the following instruction.
-  */
+  #ifndef VER_TM1639
+    irq_gpio_dht();
+  #endif
 }
 
 /**

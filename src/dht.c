@@ -11,7 +11,9 @@ void dht_init_tim4() {
 }
 
 void dht_start() {
-  GPIO_Init(PORT_DHT, PIN_DHT_ENABLE, GPIO_MODE_OUT_PP_HIGH_FAST);
+  #ifndef VER_TM1639
+    GPIO_Init(PORT_DHT, PIN_DHT_ENABLE, GPIO_MODE_OUT_PP_HIGH_FAST);
+  #endif
   GPIO_Init(PORT_DHT, PIN_DHT_DATA, GPIO_MODE_OUT_PP_HIGH_FAST);
   dht.flags = DHT_PENDING;
   for (uint8_t i = 0; i < 5; ++i) dht.data[i] = 0;
@@ -21,8 +23,8 @@ void dht_start() {
   disableInterrupts();
     dht.pos = 0xFE;
     GPIO_Init(PORT_DHT, PIN_DHT_DATA, GPIO_MODE_IN_PU_IT);
-    ITC_SetSoftwarePriority(ITC_IRQ_PORTC, ITC_PRIORITYLEVEL_3);
-    EXTI_SetExtIntSensitivity(EXTI_PORT_GPIOC, EXTI_SENSITIVITY_FALL_ONLY);
+    ITC_SetSoftwarePriority(ITC_IRQ_PORTD, ITC_PRIORITYLEVEL_3);
+    EXTI_SetExtIntSensitivity(EXTI_PORT_GPIOD, EXTI_SENSITIVITY_FALL_ONLY);
     dht_init_tim4();
   enableInterrupts();
   delay_ms_blocking(10); // wait for data
@@ -51,7 +53,7 @@ Start:
  Data (40 bit) each bit:
  DHT11: 50us (LOW) + (0: 27us HIGH | 1: 70us HIGH)
 */
-void irq_gpioc() {
+void irq_gpio_dht() {
   uint8_t t = TIM4_GetCounter();
   if (t < 50) return; // maybe on first
   TIM4_SetCounter(0);
@@ -60,7 +62,7 @@ void irq_gpioc() {
     dht.data[dht.pos/8] |= 1 << (7 - dht.pos % 8);
   if (dht.pos == 39) {
     uint8_t crc = dht.data[0]+dht.data[1]+dht.data[2]+dht.data[3];
-    if (crc != dht.data[4]) {
+    if (crc != dht.data[4] || (dht.data[0] == 0 && dht.data[2]==0)) {
       dht.flags |= DHT_CRC_ERR;
     }
     dht_stop();

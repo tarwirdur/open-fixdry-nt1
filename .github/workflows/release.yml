@@ -5,7 +5,7 @@ on:
     tags:
       - "v*"
 jobs:
-  check-bats-version:
+  build_stm8s103:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install -y sdcc

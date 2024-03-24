@@ -112,8 +112,10 @@ void do_stopCountdown() {
 void do_powerOff() {
   state.flags = 0;
   clear_screen();
-  GPIO_WriteLow(PORT_DHT, PIN_DHT_ENABLE);
-  GPIO_WriteLow(PORT_DHT, PIN_DHT_DATA);
+  #ifndef VER_TM1639
+    GPIO_WriteLow(PORT_DHT, PIN_DHT_ENABLE);
+    GPIO_WriteLow(PORT_DHT, PIN_DHT_DATA);
+  #endif
   do_stopCountdown();
   eeprom_save();
 }
